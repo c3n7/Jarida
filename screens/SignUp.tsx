@@ -10,6 +10,7 @@ import AuthWrapperLayout from "@/components/screens/auth/AuthWrapperLayout";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import Config from "@/constants/Config";
+import { useState } from "react";
 
 type Props = NativeStackScreenProps<ParamListBase, "SignUp">;
 
@@ -32,44 +33,36 @@ export default function SignUp({ navigation }: Props) {
   );
 }
 
-interface ResponsePayload {
-  password1?: Array<string>;
-  password2?: Array<string>;
-  email?: Array<string>;
-  username?: Array<string>;
-}
-interface BodyPayload {
+interface SignUpFields {
   password1?: string;
   password2?: string;
-  email?: string;
   username?: string;
 }
 
+const initialValues: SignUpFields = {
+  username: "",
+  password1: "",
+  password2: "",
+};
+
 function FormView({ onSuccess }: { onSuccess: Function }) {
+  const [processing, setProcessing] = useState<boolean>(false);
+
   return (
     <Formik
-      initialValues={{
-        email: "",
-        password: "",
-        password_confirmation: "",
-      }}
+      initialValues={{ ...initialValues }}
       validationSchema={Yup.object({
-        email: Yup.string().email().required("This field is required."),
-        password: Yup.string().required("This field is required."),
-        password_confirmation: Yup.string().oneOf(
-          [Yup.ref("password"), ""],
+        username: Yup.string().required("This field is required."),
+        password1: Yup.string().required("This field is required."),
+        password2: Yup.string().oneOf(
+          [Yup.ref("password1"), ""],
           "Passwords must match."
         ),
       })}
       onSubmit={async (values, { setFieldError }) => {
-        const payload: BodyPayload = {
-          email: values.email,
-          username: values.email,
-          password1: values.password,
-          password2: values.password_confirmation,
-        };
-
-        await fetch(`${Config.API_URL}/dj-rest-auth/registration`, {
+        const payload: SignUpFields = { ...values };
+        setProcessing(true);
+        await fetch(`${Config.API_URL}/dj-rest-auth/registration/`, {
           method: "POST",
           headers: {
             Accept: "application/json",
@@ -81,32 +74,25 @@ function FormView({ onSuccess }: { onSuccess: Function }) {
             const hasJSON =
               response.headers.get("content-type") === "application/json";
 
-            let data: ResponsePayload = {};
+            let data: SignUpFields = {};
 
             if (hasJSON && (response.status >= 400 || response.status <= 499)) {
               data = await response.json();
 
               Object.keys(data).forEach((key) => {
-                switch (key) {
-                  case "password1":
-                    setFieldError("password", data[key]?.[0] ?? "");
-                    break;
-                  case "password2":
-                    setFieldError("password", data[key]?.[0] ?? "");
-                    break;
-                  case "username":
-                    setFieldError("email", data[key]?.[0] ?? "");
-                    break;
-                  case "email":
-                    setFieldError("email", data[key]?.[0] ?? "");
-                    break;
-                  default:
-                    break;
+                if (
+                  key === "password1" ||
+                  key === "password2" ||
+                  key === "username"
+                ) {
+                  setFieldError(key, data[key]?.[0] ?? "");
                 }
               });
 
               throw data;
             }
+
+            console.log(response.status, data);
             if (!response.ok) {
               throw { message: "Operation Failed." };
             }
@@ -127,20 +113,21 @@ function FormView({ onSuccess }: { onSuccess: Function }) {
           })
           .catch((e) => {
             console.log(e);
-          });
+          })
+          .finally(() => setProcessing(false));
       }}
     >
       {({ handleChange, handleSubmit, values, errors, touched }) => (
         <>
           <View style={styles.input}>
             <InputText
-              placeholder="Email"
+              placeholder="Username"
               leftSection={({ color }) => (
-                <Ionicons name="mail" size={15} color={color} />
+                <Ionicons name="person" size={15} color={color} />
               )}
-              value={values.email}
-              onChange={handleChange("email")}
-              error={touched.email && errors.email}
+              value={values.username}
+              onChange={handleChange("username")}
+              error={touched.username && errors.username}
             />
           </View>
           <View style={styles.input}>
@@ -149,9 +136,10 @@ function FormView({ onSuccess }: { onSuccess: Function }) {
               leftSection={({ color }) => (
                 <Ionicons name="lock-closed" size={15} color={color} />
               )}
-              value={values.password}
-              onChange={handleChange("password")}
-              error={touched.password && errors.password}
+              value={values.password1}
+              onChange={handleChange("password1")}
+              error={touched.password1 && errors.password1}
+              secureTextEntry
             />
           </View>
           <View style={styles.input}>
@@ -160,15 +148,16 @@ function FormView({ onSuccess }: { onSuccess: Function }) {
               leftSection={({ color }) => (
                 <Ionicons name="lock-closed" size={15} color={color} />
               )}
-              value={values.password_confirmation}
-              onChange={handleChange("password_confirmation")}
-              error={
-                touched.password_confirmation && errors.password_confirmation
-              }
+              value={values.password2}
+              onChange={handleChange("password2")}
+              error={touched.password2 && errors.password2}
+              secureTextEntry
             />
           </View>
 
-          <Button onPress={() => handleSubmit()}>Register</Button>
+          <Button onPress={() => handleSubmit()} loading={processing}>
+            Register
+          </Button>
         </>
       )}
     </Formik>

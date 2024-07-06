@@ -7,12 +7,14 @@ export default function InputText({
   value,
   onChange,
   error,
+  secureTextEntry,
 }: {
   placeholder: string;
   leftSection?: ({ color }: { color: string }) => React.ReactNode;
   value?: string;
   onChange?: ((text: string) => void) | undefined;
   error?: string | false;
+  secureTextEntry?: boolean;
 }) {
   return (
     <View>
@@ -35,6 +37,7 @@ export default function InputText({
           onChangeText={onChange}
           style={[styles.input, error ? styles.inputError : styles.inputNormal]}
           placeholderTextColor={error ? ThemeColors.error : ThemeColors.gray500}
+          secureTextEntry={secureTextEntry}
         />
       </View>
 

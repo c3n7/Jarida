@@ -10,16 +10,19 @@ import {
 export default function Button({
   children,
   onPress,
+  loading,
 }: {
   children: React.ReactNode;
   onPress?: PressableProps["onPress"];
+  loading?: boolean;
 }) {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, loading && styles.loading]}>
       <Pressable
         style={styles.pressable}
         android_ripple={{ color: ThemeColors.primary300 }}
         onPress={onPress}
+        disabled={loading}
       >
         <Text style={styles.text}>{children}</Text>
       </Pressable>
@@ -33,6 +36,9 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     borderRadius: 4,
+  },
+  loading: {
+    backgroundColor: ThemeColors.gray500,
   },
   text: {
     color: "white",

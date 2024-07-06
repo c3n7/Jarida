@@ -17,9 +17,9 @@ export default function SignIn({ navigation }: Props) {
     >
       <View style={styles.input}>
         <InputText
-          placeholder="Email"
+          placeholder="Username"
           leftSection={({ color }) => (
-            <Ionicons name="mail" size={15} color={color} />
+            <Ionicons name="person" size={15} color={color} />
           )}
         />
       </View>

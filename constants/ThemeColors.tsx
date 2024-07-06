@@ -7,7 +7,7 @@ const ThemeColors = {
   primary300: "#5690ab",
   primary500: "#7e4ee5",
   primary800: "#1c2f38",
-  error: "#E71D36",
+  error: "#ff4c51",
   warning: "#FFBC42",
 };
 
