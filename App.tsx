@@ -4,25 +4,40 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import SignIn from "./screens/SignIn";
 import SignUp from "./screens/SignUp";
+import ThemeColors from "./constants/ThemeColors";
+import HeaderLogo from "./components/screens/auth/HeaderLogo";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
 
       <NavigationContainer>
-        <Stack.Navigator>
+        <Stack.Navigator
+          screenOptions={{
+            contentStyle: { backgroundColor: ThemeColors.base100 },
+            headerShadowVisible: false,
+          }}
+        >
           <Stack.Screen
             name="SignIn"
             component={SignIn}
-            options={{ headerShown: false }}
+            options={{
+              headerTitle: () => <HeaderLogo />,
+              headerStyle: { backgroundColor: ThemeColors.base100 },
+              headerTintColor: ThemeColors.primary500,
+            }}
           />
           <Stack.Screen
             name="SignUp"
             component={SignUp}
-            options={{ headerShown: false }}
+            options={{
+              headerTitle: () => <HeaderLogo />,
+              headerStyle: { backgroundColor: ThemeColors.base100 },
+              headerTintColor: ThemeColors.primary500,
+            }}
           />
         </Stack.Navigator>
       </NavigationContainer>

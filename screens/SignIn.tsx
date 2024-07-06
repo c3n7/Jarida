@@ -1,5 +1,4 @@
 import InputText from "@/components/ui/InputText";
-import ThemeColors from "@/constants/ThemeColors";
 import { StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Button from "@/components/ui/Button";

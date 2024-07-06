@@ -16,11 +16,7 @@ export default function AuthWrapperLayout({
 }) {
   return (
     <View style={styles.screen}>
-      <View style={styles.logoContainer}>
-        <Image source={require("@/assets/icon.png")} style={styles.logo} />
-        <Text style={styles.logoText}>Jarida</Text>
-      </View>
-
+      {/* <View style={styles.container}> */}
       <View style={styles.wrapper}></View>
       <View style={styles.greeting}>
         <Text style={styles.title}>{title}</Text>
@@ -29,6 +25,7 @@ export default function AuthWrapperLayout({
 
       {children}
       <View style={styles.wrapper}></View>
+      {/* </View> */}
     </View>
   );
 }
@@ -37,9 +34,16 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     alignItems: "center",
-    // justifyContent: "center",
     marginTop: 35,
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
+    // backgroundColor: "red",
+  },
+  container: {
+    // flex: 1,
+    // backgroundColor: ThemeColors.base200,
+    width: "100%",
+    padding: 16,
+    borderRadius: 4,
   },
   logoContainer: {
     flexDirection: "row",
@@ -65,11 +69,11 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    color: ThemeColors.primary800,
+    color: ThemeColors.baseContent,
   },
   description: {
     // fontSize: 18,
-    color: ThemeColors.primary800,
+    color: ThemeColors.baseContent,
   },
   wrapper: {
     flex: 1,
