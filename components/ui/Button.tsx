@@ -1,5 +1,6 @@
 import ThemeColors from "@/constants/ThemeColors";
 import {
+  ActivityIndicator,
   Pressable,
   PressableProps,
   StyleSheet,
@@ -24,7 +25,15 @@ export default function Button({
         onPress={onPress}
         disabled={loading}
       >
-        <Text style={styles.text}>{children}</Text>
+        {loading && (
+          <ActivityIndicator
+            style={styles.loadingIcon}
+            color={ThemeColors.baseContent}
+          />
+        )}
+        <Text style={[styles.text, loading && styles.loadingText]}>
+          {children}
+        </Text>
       </Pressable>
     </View>
   );
@@ -35,6 +44,7 @@ const styles = StyleSheet.create({
     backgroundColor: ThemeColors.primary500,
     width: "100%",
     flexDirection: "row",
+    justifyContent: "center",
     borderRadius: 4,
   },
   loading: {
@@ -43,10 +53,15 @@ const styles = StyleSheet.create({
   text: {
     color: "white",
     textAlign: "center",
-    width: "100%",
+  },
+  loadingIcon: {
+    marginRight: 8,
+  },
+  loadingText: {
+    color: ThemeColors.baseContent,
   },
   pressable: {
-    width: "100%",
+    flexDirection: "row",
     paddingVertical: 8,
   },
 });
