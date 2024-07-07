@@ -12,7 +12,12 @@ import * as Yup from "yup";
 import Config from "@/constants/Config";
 import { useState } from "react";
 import { store, useAppSelector } from "@/store/store";
-import { setUsername } from "@/store/authSlice";
+import {
+  setUsername,
+  signUp,
+  SignUpPayload,
+  SignUpResponse,
+} from "@/store/authSlice";
 
 type Props = NativeStackScreenProps<ParamListBase, "SignUp">;
 
@@ -42,8 +47,10 @@ interface SignUpFields {
 }
 
 function FormView({ onSuccess }: { onSuccess: Function }) {
-  const [processing, setProcessing] = useState<boolean>(false);
   const username = useAppSelector((state) => state.auth.username);
+  const signingUp = useAppSelector(
+    (state) => state.auth.signUpStatus === "pending"
+  );
 
   return (
     <Formik
@@ -52,7 +59,7 @@ function FormView({ onSuccess }: { onSuccess: Function }) {
           username: username ?? "",
           password1: "",
           password2: "",
-        } satisfies SignUpFields
+        } satisfies SignUpPayload
       }
       validationSchema={Yup.object({
         username: Yup.string().required("This field is required."),
@@ -63,45 +70,9 @@ function FormView({ onSuccess }: { onSuccess: Function }) {
         ),
       })}
       onSubmit={async (values, { setFieldError }) => {
-        const payload: SignUpFields = { ...values };
-        setProcessing(true);
-        await fetch(`${Config.API_URL}/dj-rest-auth/registration/`, {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        })
-          .then(async (response) => {
-            const hasJSON =
-              response.headers.get("content-type") === "application/json";
-
-            let data: SignUpFields = {};
-
-            if (hasJSON && (response.status >= 400 || response.status <= 499)) {
-              data = await response.json();
-
-              Object.keys(data).forEach((key) => {
-                if (
-                  key === "password1" ||
-                  key === "password2" ||
-                  key === "username"
-                ) {
-                  setFieldError(key, data[key]?.[0] ?? "");
-                }
-              });
-
-              throw data;
-            }
-
-            console.log(response.status, data);
-            if (!response.ok) {
-              throw { message: "Operation Failed." };
-            }
-
-            return data;
-          })
+        await store
+          .dispatch(signUp(values))
+          .unwrap()
           .then(() => {
             Alert.alert(
               "Welcome",
@@ -115,9 +86,10 @@ function FormView({ onSuccess }: { onSuccess: Function }) {
             );
           })
           .catch((e) => {
-            console.log(e);
-          })
-          .finally(() => setProcessing(false));
+            if (e.username) setFieldError("username", e.username);
+            if (e.password1) setFieldError("password1", e.password1);
+            if (e.password2) setFieldError("password2", e.password2);
+          });
       }}
     >
       {({
@@ -168,7 +140,7 @@ function FormView({ onSuccess }: { onSuccess: Function }) {
             />
           </View>
 
-          <Button onPress={() => handleSubmit()} loading={processing}>
+          <Button onPress={() => handleSubmit()} loading={signingUp}>
             Register
           </Button>
         </>

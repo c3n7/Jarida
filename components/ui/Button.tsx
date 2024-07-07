@@ -61,7 +61,9 @@ const styles = StyleSheet.create({
     color: ThemeColors.baseContent,
   },
   pressable: {
+    width: "100%",
     flexDirection: "row",
+    justifyContent: "center",
     paddingVertical: 8,
   },
 });
