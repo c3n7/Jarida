@@ -11,6 +11,8 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import Config from "@/constants/Config";
 import { useState } from "react";
+import { store, useAppSelector } from "@/store/store";
+import { setUsername } from "@/store/authSlice";
 
 type Props = NativeStackScreenProps<ParamListBase, "SignUp">;
 
@@ -39,18 +41,19 @@ interface SignUpFields {
   username?: string;
 }
 
-const initialValues: SignUpFields = {
-  username: "",
-  password1: "",
-  password2: "",
-};
-
 function FormView({ onSuccess }: { onSuccess: Function }) {
   const [processing, setProcessing] = useState<boolean>(false);
+  const username = useAppSelector((state) => state.auth.username);
 
   return (
     <Formik
-      initialValues={{ ...initialValues }}
+      initialValues={
+        {
+          username: username ?? "",
+          password1: "",
+          password2: "",
+        } satisfies SignUpFields
+      }
       validationSchema={Yup.object({
         username: Yup.string().required("This field is required."),
         password1: Yup.string().required("This field is required."),
@@ -117,7 +120,14 @@ function FormView({ onSuccess }: { onSuccess: Function }) {
           .finally(() => setProcessing(false));
       }}
     >
-      {({ handleChange, handleSubmit, values, errors, touched }) => (
+      {({
+        handleChange,
+        setFieldValue,
+        handleSubmit,
+        values,
+        errors,
+        touched,
+      }) => (
         <>
           <View style={styles.input}>
             <InputText
@@ -126,7 +136,10 @@ function FormView({ onSuccess }: { onSuccess: Function }) {
                 <Ionicons name="person" size={15} color={color} />
               )}
               value={values.username}
-              onChange={handleChange("username")}
+              onChange={(text: string) => {
+                setFieldValue("username", text);
+                store.dispatch(setUsername(text));
+              }}
               error={touched.username && errors.username}
             />
           </View>

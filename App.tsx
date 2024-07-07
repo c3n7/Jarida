@@ -1,17 +1,19 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import SignIn from "./screens/SignIn";
 import SignUp from "./screens/SignUp";
 import ThemeColors from "./constants/ThemeColors";
 import HeaderLogo from "./components/screens/auth/HeaderLogo";
+import { Provider } from "react-redux";
+import { store } from "./store/store";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <>
+    <Provider store={store}>
       <StatusBar style="dark" />
 
       <NavigationContainer>
@@ -41,7 +43,7 @@ export default function App() {
           />
         </Stack.Navigator>
       </NavigationContainer>
-    </>
+    </Provider>
   );
 }
 
