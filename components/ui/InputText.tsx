@@ -1,5 +1,12 @@
 import ThemeColors from "@/constants/ThemeColors";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  StyleProp,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  ViewStyle,
+} from "react-native";
 
 export default function InputText({
   placeholder,
@@ -8,6 +15,7 @@ export default function InputText({
   onChange,
   error,
   secureTextEntry,
+  containerStyle,
 }: {
   placeholder: string;
   leftSection?: ({ color }: { color: string }) => React.ReactNode;
@@ -15,12 +23,14 @@ export default function InputText({
   onChange?: ((text: string) => void) | undefined;
   error?: string | false;
   secureTextEntry?: boolean;
+  containerStyle?: StyleProp<ViewStyle>;
 }) {
   return (
     <View>
       <View
         style={[
           styles.container,
+          containerStyle,
           error ? styles.errorContainer : styles.containerNormal,
         ]}
       >
