@@ -1,6 +1,7 @@
 import Config from "@/constants/Config";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ThunkStatus } from "./store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export type SignUpPayload = {
   username: string;
@@ -69,7 +70,6 @@ export const signIn = createAsyncThunk(
         result = (await response.json()) as SignInResponse;
       }
 
-      console.log("SignIn", result);
       if (!response.ok) {
         result ??= { message: "Operation Failed." };
         return thunkApi.rejectWithValue(result);
@@ -101,6 +101,10 @@ export const authSlice = createSlice({
     setUsername: (state, action: PayloadAction<string>) => {
       state.username = action.payload;
     },
+    setToken: (state, action: PayloadAction<string>) => {
+      state.token = action.payload;
+      console.log("Preloaded token");
+    },
   },
   extraReducers(builder) {
     builder.addCase(signUp.pending, (state) => {
@@ -121,11 +125,14 @@ export const authSlice = createSlice({
     });
     builder.addCase(signIn.fulfilled, (state, { payload }) => {
       state.token = payload?.key;
+      if (payload?.key) {
+        AsyncStorage.setItem("token", payload.key);
+      }
       state.signInStatus = "fulfilled";
     });
   },
 });
 
-export const { setUsername } = authSlice.actions;
+export const { setUsername, setToken } = authSlice.actions;
 
 export default authSlice.reducer;
