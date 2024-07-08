@@ -1,5 +1,4 @@
 import InputText from "@/components/ui/InputText";
-import ThemeColors from "@/constants/ThemeColors";
 import { Alert, StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Button from "@/components/ui/Button";
@@ -9,8 +8,6 @@ import { ParamListBase } from "@react-navigation/native";
 import AuthWrapperLayout from "@/components/screens/auth/AuthWrapperLayout";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import Config from "@/constants/Config";
-import { useState } from "react";
 import { store, useAppSelector } from "@/store/store";
 import {
   setUsername,
@@ -40,15 +37,9 @@ export default function SignUp({ navigation }: Props) {
   );
 }
 
-interface SignUpFields {
-  password1?: string;
-  password2?: string;
-  username?: string;
-}
-
 function FormView({ onSuccess }: { onSuccess: Function }) {
   const username = useAppSelector((state) => state.auth.username);
-  const signingUp = useAppSelector(
+  const isSubmitting = useAppSelector(
     (state) => state.auth.signUpStatus === "pending"
   );
 
@@ -85,7 +76,7 @@ function FormView({ onSuccess }: { onSuccess: Function }) {
               ]
             );
           })
-          .catch((e) => {
+          .catch((e: SignUpResponse) => {
             if (e.username) setFieldError("username", e.username);
             if (e.password1) setFieldError("password1", e.password1);
             if (e.password2) setFieldError("password2", e.password2);
@@ -140,7 +131,7 @@ function FormView({ onSuccess }: { onSuccess: Function }) {
             />
           </View>
 
-          <Button onPress={() => handleSubmit()} loading={signingUp}>
+          <Button onPress={() => handleSubmit()} loading={isSubmitting}>
             Register
           </Button>
         </>
