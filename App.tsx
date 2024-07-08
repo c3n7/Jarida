@@ -1,10 +1,9 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet } from "react-native";
 import { Provider } from "react-redux";
 import { store, useAppSelector } from "./store/store";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useLayoutEffect } from "react";
+import { useLayoutEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { setToken } from "./store/authSlice";
 import AuthenticationStack from "./screens/AuthenticationStack";
@@ -43,12 +42,3 @@ export default function App() {
     </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
