@@ -103,7 +103,6 @@ export const authSlice = createSlice({
     },
     setToken: (state, action: PayloadAction<string>) => {
       state.token = action.payload;
-      console.log("Preloaded token");
     },
   },
   extraReducers(builder) {
