@@ -1,20 +1,29 @@
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import {
+  createNativeStackNavigator,
+  NativeStackScreenProps,
+} from "@react-navigation/native-stack";
 import ListJournals from "./ListJournals";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import ThemeColors from "@/constants/ThemeColors";
 import EditJournal from "./EditJournal";
 import { Ionicons } from "@expo/vector-icons";
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import ShowJournal from "./ShowJournal";
 import {
   DrawerNavigatorParamList,
   StackNavigatorParamList,
 } from "@/types/navigation";
+import HeaderIcon from "@/components/ui/HeaderIcon";
 
 const Stack = createNativeStackNavigator<StackNavigatorParamList>();
 const Drawer = createDrawerNavigator<DrawerNavigatorParamList>();
 
-function DrawerNavigator() {
+type DrawerNavigatorProps = NativeStackScreenProps<
+  StackNavigatorParamList,
+  "DrawerScreens"
+>;
+
+function DrawerNavigator({ navigation }: DrawerNavigatorProps) {
   return (
     <Drawer.Navigator
       screenOptions={{
@@ -26,17 +35,14 @@ function DrawerNavigator() {
       <Drawer.Screen
         name="ListJournals"
         component={ListJournals}
-        options={({ navigation }) => ({
+        options={{
           title: "Home",
           headerRight: ({ tintColor }) => (
-            <Pressable
-              style={styles.headerIcon}
-              onPress={() => navigation.navigate("EditJournal")}
-            >
+            <HeaderIcon onPress={() => navigation.navigate("EditJournal", {})}>
               <Ionicons name="add" size={24} color={tintColor} />
-            </Pressable>
+            </HeaderIcon>
           ),
-        })}
+        }}
       />
     </Drawer.Navigator>
   );

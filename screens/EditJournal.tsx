@@ -1,11 +1,10 @@
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { ParamListBase } from "@react-navigation/native";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import InputText from "@/components/ui/InputText";
 import Button from "@/components/ui/Button";
-import { useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useMemo } from "react";
 import {
   fetchJournals,
   JournalEntryPayload,
@@ -13,14 +12,17 @@ import {
   saveJournal,
 } from "@/store/journalSlice";
 import { store, useAppSelector } from "@/store/store";
+import { StackNavigatorParamList } from "@/types/navigation";
 
-type Props = NativeStackScreenProps<ParamListBase, "EditJournal">;
+type Props = NativeStackScreenProps<StackNavigatorParamList, "EditJournal">;
 
-interface PageProps extends Props {
-  journal?: JournalEntryPayload;
-}
+export default function EditJournal({ navigation, route }: Props) {
+  const journalId = useMemo(() => route?.params?.journalId, [route]);
+  const journal = useAppSelector((state) =>
+    state.journals.journals.find((journal) => journal.id === journalId)
+  );
+  const token = useAppSelector((state) => state.auth.token!);
 
-export default function EditJournal({ navigation, journal }: PageProps) {
   useLayoutEffect(() => {
     navigation.setOptions({
       title: journal ? "Edit Journal Entry" : "Add Journal Entry",
@@ -28,7 +30,17 @@ export default function EditJournal({ navigation, journal }: PageProps) {
   }, [navigation, journal]);
   return (
     <View style={styles.screen}>
-      <FormView onSuccess={() => navigation.goBack()} journal={journal} />
+      <FormView
+        journal={{
+          id: journal?.id,
+          title: journal?.title ?? "",
+          content: journal?.content ?? "",
+          date: journal?.date ?? "",
+          category_names: journal?.categories ?? [],
+          token,
+        }}
+        onSuccess={() => navigation.goBack()}
+      />
     </View>
   );
 }
@@ -48,6 +60,7 @@ function FormView({
   return (
     <Formik
       initialValues={{
+        id: journal?.id,
         title: journal?.title ?? "",
         content: journal?.content ?? "",
         date: journal?.date ?? "",

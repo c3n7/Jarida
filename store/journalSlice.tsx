@@ -37,7 +37,7 @@ export const saveJournal = createAsyncThunk(
       url += `${id}/`;
     }
     return await fetch(url, {
-      method: "POST",
+      method: id ? "PUT" : "POST",
       headers: {
         Authorization: `Token ${token}`,
         Accept: "application/json",
