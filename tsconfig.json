@@ -4,9 +4,7 @@
     "strict": true,
     "paths": {
       "@/components/*": ["./components/*"],
-      "@/constants/*": ["./constants/*"],
-      "@/assets/*": ["./assets/*"],
-      "@/store/*": ["./store/*"]
+      "@/*": ["./*"]
     }
   }
 }

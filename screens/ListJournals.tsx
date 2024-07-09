@@ -1,6 +1,5 @@
-import JournalCard from "@/components/screens/journals/JournalCard";
 import InputText from "@/components/ui/InputText";
-import { ParamListBase } from "@react-navigation/native";
+import { CompositeScreenProps } from "@react-navigation/native";
 import { StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import CategoryFilter from "@/components/screens/journals/CategoryFilter";
@@ -9,10 +8,20 @@ import { store, useAppSelector } from "@/store/store";
 import { useEffect, useMemo, useState } from "react";
 import { fetchJournals } from "@/store/journalSlice";
 import JournalsFlatList from "@/components/screens/journals/JournalsFlatList";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import {
+  DrawerNavigatorParamList,
+  StackNavigatorParamList,
+} from "@/types/navigation";
 
-type Props = DrawerScreenProps<ParamListBase, "ListJournals">;
+type Props = CompositeScreenProps<
+  DrawerScreenProps<DrawerNavigatorParamList, "ListJournals">,
+  NativeStackScreenProps<StackNavigatorParamList>
+>;
 
-export default function ListJournals({}: Props) {
+export type ListJournalsNavigationProp = Props["navigation"];
+
+export default function ListJournals({ navigation }: Props) {
   const token = useAppSelector((state) => state.auth.token!);
   const journals = useAppSelector((state) => state.journals.journals);
   const journalsStatus = useAppSelector(
@@ -59,7 +68,7 @@ export default function ListJournals({}: Props) {
         <CategoryFilter style={styles.badge}>Ideas</CategoryFilter>
       </View>
 
-      <JournalsFlatList journals={journalsFiltered} />
+      <JournalsFlatList journals={journalsFiltered} navigation={navigation} />
     </View>
   );
 }

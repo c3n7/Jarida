@@ -1,16 +1,29 @@
 import ThemeColors from "@/constants/ThemeColors";
 import { JournalEntry } from "@/store/journalSlice";
-import { StyleProp, StyleSheet, Text, View, ViewStyle } from "react-native";
+import {
+  Pressable,
+  StyleProp,
+  StyleSheet,
+  Text,
+  View,
+  ViewStyle,
+} from "react-native";
+import { ListJournalsNavigationProp } from "@/screens/ListJournals";
 
 export default function JournalCard({
   journal,
   style,
+  navigation,
 }: {
   journal: JournalEntry;
   style?: StyleProp<ViewStyle>;
+  navigation: ListJournalsNavigationProp;
 }) {
   return (
-    <View style={[styles.container, style]}>
+    <Pressable
+      style={[styles.container, style]}
+      onPress={() => navigation.navigate("ShowJournal", { journal })}
+    >
       <Text style={styles.title}>{journal.title}</Text>
       <Text style={styles.date}>
         {new Date(journal.date).toLocaleDateString("en-GB", {
@@ -28,7 +41,7 @@ export default function JournalCard({
       <View style={styles.categoryContainer}>
         <Text style={styles.categoryBadge}>Reflections</Text>
       </View>
-    </View>
+    </Pressable>
   );
 }
 

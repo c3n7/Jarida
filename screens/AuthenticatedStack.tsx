@@ -5,9 +5,14 @@ import ThemeColors from "@/constants/ThemeColors";
 import EditJournal from "./EditJournal";
 import { Ionicons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, View } from "react-native";
+import ShowJournal from "./ShowJournal";
+import {
+  DrawerNavigatorParamList,
+  StackNavigatorParamList,
+} from "@/types/navigation";
 
-const Stack = createNativeStackNavigator();
-const Drawer = createDrawerNavigator();
+const Stack = createNativeStackNavigator<StackNavigatorParamList>();
+const Drawer = createDrawerNavigator<DrawerNavigatorParamList>();
 
 function DrawerNavigator() {
   return (
@@ -40,17 +45,18 @@ function DrawerNavigator() {
 
 export default function AuthenticatedStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerTintColor: ThemeColors.primary500,
+      }}
+    >
       <Stack.Screen
         name="DrawerScreens"
         component={DrawerNavigator}
         options={{ headerShown: false }}
       />
-      <Stack.Screen
-        name="EditJournal"
-        component={EditJournal}
-        options={{ headerTintColor: ThemeColors.primary500 }}
-      />
+      <Stack.Screen name="EditJournal" component={EditJournal} />
+      <Stack.Screen name="ShowJournal" component={ShowJournal} />
     </Stack.Navigator>
   );
 }
