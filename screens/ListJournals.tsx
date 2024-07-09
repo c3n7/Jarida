@@ -6,7 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import CategoryFilter from "@/components/screens/journals/CategoryFilter";
 import { DrawerScreenProps } from "@react-navigation/drawer";
 import { store, useAppSelector } from "@/store/store";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { fetchJournals } from "@/store/journalSlice";
 import JournalsFlatList from "@/components/screens/journals/JournalsFlatList";
 
@@ -27,8 +27,17 @@ export default function ListJournals({}: Props) {
     store.dispatch(fetchJournals({ token }));
   }, [token]);
 
+  const [query, setQuery] = useState<string>("");
+  const journalsFiltered = useMemo(
+    () =>
+      journals.filter((journal) =>
+        query ? journal.title.toLowerCase().includes(query.toLowerCase()) : true
+      ),
+    [query, journals]
+  );
+
   return (
-    <View style={styles.screen}>
+    <View>
       <View style={styles.input}>
         <InputText
           placeholder="Type to search..."
@@ -36,6 +45,8 @@ export default function ListJournals({}: Props) {
             <Ionicons name="search" size={19} color={color} />
           )}
           containerStyle={styles.searchInput}
+          value={query}
+          onChange={setQuery}
         />
       </View>
       <View style={styles.filterBadges}>
@@ -48,21 +59,21 @@ export default function ListJournals({}: Props) {
         <CategoryFilter style={styles.badge}>Ideas</CategoryFilter>
       </View>
 
-      <JournalsFlatList journals={journals} />
+      <JournalsFlatList journals={journalsFiltered} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    padding: 8,
-  },
   input: {
     marginBottom: 8,
+    paddingTop: 8,
+    paddingHorizontal: 8,
   },
   filterBadges: {
     flexDirection: "row",
     flexWrap: "wrap",
+    paddingHorizontal: 8,
   },
   badge: {
     marginRight: 8,

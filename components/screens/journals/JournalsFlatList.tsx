@@ -14,6 +14,7 @@ export default function JournalsFlatList({
       renderItem={(itemData) => (
         <JournalCard journal={itemData.item} style={styles.journalCard} />
       )}
+      style={styles.list}
     />
   );
 }
@@ -21,5 +22,9 @@ export default function JournalsFlatList({
 const styles = StyleSheet.create({
   journalCard: {
     marginBottom: 8,
+    marginHorizontal: 8,
+  },
+  list: {
+    marginBottom: 130,
   },
 });
