@@ -14,16 +14,15 @@ export type JournalEntryPayload = {
   id?: number;
   title: string;
   content: string;
-  date: Date;
+  date: string;
   category_names?: Array<string>;
-  token?: string;
+  token: string;
 };
 
 export type JournalEntryResponse = {
   title?: string;
   content?: string;
   date?: string;
-  category_names?: Array<string>;
   message?: string;
 };
 
@@ -33,18 +32,23 @@ export const saveJournal = createAsyncThunk(
     { id, title, content, date, category_names, token }: JournalEntryPayload,
     thunkApi
   ) => {
-    return await fetch(`${Config.API_URL}/api/v1/journal-entries/`, {
+    let url = `${Config.API_URL}/journal-entries/`;
+    if (id) {
+      url += `${id}/`;
+    }
+    return await fetch(url, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${token} `,
+        Authorization: `Token ${token}`,
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ id, title, content, date, category_names }),
+      body: JSON.stringify({ title, content, date, category_names }),
     }).then(async (response) => {
       let result: JournalEntryResponse | null = null;
       if (response.headers.get("content-type") === "application/json") {
         result = (await response.json()) as JournalEntryResponse;
+        console.log(result);
       }
 
       if (!response.ok) {
