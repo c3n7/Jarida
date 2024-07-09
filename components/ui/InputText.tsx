@@ -9,6 +9,7 @@ import {
 } from "react-native";
 
 export default function InputText({
+  label,
   placeholder,
   leftSection,
   value,
@@ -16,7 +17,9 @@ export default function InputText({
   error,
   secureTextEntry,
   containerStyle,
+  multiline,
 }: {
+  label?: string;
   placeholder: string;
   leftSection?: ({ color }: { color: string }) => React.ReactNode;
   value?: string;
@@ -24,9 +27,11 @@ export default function InputText({
   error?: string | false;
   secureTextEntry?: boolean;
   containerStyle?: StyleProp<ViewStyle>;
+  multiline?: boolean;
 }) {
   return (
     <View>
+      {label && <Text style={styles.labelText}>{label}</Text>}
       <View
         style={[
           styles.container,
@@ -45,9 +50,14 @@ export default function InputText({
           placeholder={placeholder}
           value={value}
           onChangeText={onChange}
-          style={[styles.input, error ? styles.inputError : styles.inputNormal]}
+          style={[
+            styles.input,
+            multiline && styles.multiline,
+            error ? styles.inputError : styles.inputNormal,
+          ]}
           placeholderTextColor={error ? ThemeColors.error : ThemeColors.gray500}
           secureTextEntry={secureTextEntry}
+          multiline={multiline}
         />
       </View>
 
@@ -79,6 +89,10 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     flex: 1,
   },
+  multiline: {
+    minHeight: 100,
+    textAlignVertical: "top",
+  },
   inputNormal: {
     color: ThemeColors.baseContent,
   },
@@ -93,5 +107,9 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: ThemeColors.error,
+  },
+  labelText: {
+    color: ThemeColors.baseContent,
+    marginBottom: 2,
   },
 });
