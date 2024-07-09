@@ -22,7 +22,9 @@ export default function JournalCard({
   return (
     <Pressable
       style={[styles.container, style]}
-      onPress={() => navigation.navigate("ShowJournal", { journal })}
+      onPress={() =>
+        navigation.navigate("ShowJournal", { journalId: journal.id })
+      }
     >
       <Text style={styles.title}>{journal.title}</Text>
       <Text style={styles.date}>

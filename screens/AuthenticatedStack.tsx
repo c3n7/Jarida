@@ -18,8 +18,7 @@ function DrawerNavigator() {
   return (
     <Drawer.Navigator
       screenOptions={{
-        drawerContentStyle: { backgroundColor: ThemeColors.base100 },
-        sceneContainerStyle: { backgroundColor: ThemeColors.base200 },
+        sceneContainerStyle: styles.contentStyle,
         drawerActiveTintColor: ThemeColors.primary500,
         headerTintColor: ThemeColors.primary500,
       }}
@@ -48,6 +47,7 @@ export default function AuthenticatedStack() {
     <Stack.Navigator
       screenOptions={{
         headerTintColor: ThemeColors.primary500,
+        contentStyle: styles.contentStyle,
       }}
     >
       <Stack.Screen
@@ -64,5 +64,8 @@ export default function AuthenticatedStack() {
 const styles = StyleSheet.create({
   headerIcon: {
     marginRight: 12,
+  },
+  contentStyle: {
+    backgroundColor: ThemeColors.base200,
   },
 });
