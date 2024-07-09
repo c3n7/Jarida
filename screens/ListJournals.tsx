@@ -1,12 +1,12 @@
 import JournalCard from "@/components/screens/journals/JournalCard";
 import InputText from "@/components/ui/InputText";
 import { ParamListBase } from "@react-navigation/native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import CategoryFilter from "@/components/screens/journals/CategoryFilter";
+import { DrawerScreenProps } from "@react-navigation/drawer";
 
-type Props = NativeStackScreenProps<ParamListBase, "ListJournals">;
+type Props = DrawerScreenProps<ParamListBase, "ListJournals">;
 
 export default function ListJournals({}: Props) {
   return (
@@ -30,7 +30,8 @@ export default function ListJournals({}: Props) {
         <CategoryFilter style={styles.badge}>Ideas</CategoryFilter>
       </View>
 
-      <JournalCard />
+      <JournalCard style={styles.journalCard} />
+      <JournalCard style={styles.journalCard} />
     </View>
   );
 }
@@ -52,5 +53,8 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     borderRadius: 18,
+  },
+  journalCard: {
+    marginBottom: 8,
   },
 });

@@ -37,7 +37,7 @@ export default function InputText({
         {leftSection && (
           <View style={styles.leftSection}>
             {leftSection({
-              color: error ? ThemeColors.error : ThemeColors.gray500,
+              color: error ? ThemeColors.error : ThemeColors.baseContent,
             })}
           </View>
         )}
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   containerNormal: {
-    borderColor: ThemeColors.gray500,
+    borderColor: ThemeColors.baseContent,
   },
   errorContainer: {
     borderColor: ThemeColors.error,

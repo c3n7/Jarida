@@ -1,9 +1,13 @@
 import ThemeColors from "@/constants/ThemeColors";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleProp, StyleSheet, Text, View, ViewStyle } from "react-native";
 
-export default function JournalCard() {
+export default function JournalCard({
+  style,
+}: {
+  style?: StyleProp<ViewStyle>;
+}) {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <Text style={styles.title}>What and of whom.</Text>
       <Text style={styles.date}>16 October 2024</Text>
       <View>
