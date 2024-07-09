@@ -1,24 +1,28 @@
 import ThemeColors from "@/constants/ThemeColors";
+import { JournalEntry } from "@/store/journalSlice";
 import { StyleProp, StyleSheet, Text, View, ViewStyle } from "react-native";
 
 export default function JournalCard({
+  journal,
   style,
 }: {
+  journal: JournalEntry;
   style?: StyleProp<ViewStyle>;
 }) {
   return (
     <View style={[styles.container, style]}>
-      <Text style={styles.title}>What and of whom.</Text>
-      <Text style={styles.date}>16 October 2024</Text>
+      <Text style={styles.title}>{journal.title}</Text>
+      <Text style={styles.date}>
+        {new Date(journal.date).toLocaleDateString("en-GB", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })}
+      </Text>
       <View>
-        <Text>
-          Of my grandfather Verus I have learned to be gentle and meek, and to
-          refrain from all anger and passion. From the fame and memory of him
-          that begot me I have learned both shamefastness and manlike behaviour.
-          Of my mother I have learned to be religious, and bountiful; and to
-          forbear, not only to do, but to intend any evil; to content myself
-          with a spare diet, and to fly all such excess as is incidental to
-          great wealth...
+        <Text style={styles.content}>
+          {journal.content.substring(0, 300)}
+          {journal.content.length > 300 && "..."}
         </Text>
       </View>
       <View style={styles.categoryContainer}>
@@ -42,6 +46,9 @@ const styles = StyleSheet.create({
   date: {
     color: ThemeColors.gray600,
     marginBottom: 6,
+  },
+  content: {
+    textAlign: "justify",
   },
   categoryContainer: {
     marginTop: 4,

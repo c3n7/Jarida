@@ -6,7 +6,7 @@ export type JournalEntry = {
   id: number;
   title: string;
   content: string;
-  date: Date;
+  date: string;
   categories?: Array<string>;
 };
 
@@ -48,7 +48,6 @@ export const saveJournal = createAsyncThunk(
       let result: JournalEntryResponse | null = null;
       if (response.headers.get("content-type") === "application/json") {
         result = (await response.json()) as JournalEntryResponse;
-        console.log(result);
       }
 
       if (!response.ok) {
@@ -57,6 +56,21 @@ export const saveJournal = createAsyncThunk(
       }
 
       return result;
+    });
+  }
+);
+
+export const fetchJournals = createAsyncThunk(
+  "journals/fetchJournals",
+  async ({ token }: { token: string }) => {
+    return await fetch(`${Config.API_URL}/journal-entries/`, {
+      headers: {
+        Authorization: `Token ${token}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    }).then(async (response) => {
+      return (await response.json()) as Array<JournalEntry>;
     });
   }
 );
@@ -86,6 +100,17 @@ export const journalSlice = createSlice({
     });
     builder.addCase(saveJournal.fulfilled, (state) => {
       state.saveJournalStatus = "fulfilled";
+    });
+
+    builder.addCase(fetchJournals.pending, (state) => {
+      state.saveJournalStatus = "pending";
+    });
+    builder.addCase(fetchJournals.rejected, (state) => {
+      state.saveJournalStatus = "rejected";
+    });
+    builder.addCase(fetchJournals.fulfilled, (state, { payload }) => {
+      state.saveJournalStatus = "fulfilled";
+      state.journals = payload;
     });
   },
 });

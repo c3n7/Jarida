@@ -5,10 +5,28 @@ import { StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import CategoryFilter from "@/components/screens/journals/CategoryFilter";
 import { DrawerScreenProps } from "@react-navigation/drawer";
+import { store, useAppSelector } from "@/store/store";
+import { useEffect } from "react";
+import { fetchJournals } from "@/store/journalSlice";
+import JournalsFlatList from "@/components/screens/journals/JournalsFlatList";
 
 type Props = DrawerScreenProps<ParamListBase, "ListJournals">;
 
 export default function ListJournals({}: Props) {
+  const token = useAppSelector((state) => state.auth.token!);
+  const journals = useAppSelector((state) => state.journals.journals);
+  const journalsStatus = useAppSelector(
+    (state) => state.journals.journalsStatus
+  );
+
+  useEffect(() => {
+    if (["loading", "fulfilled"].includes(journalsStatus)) {
+      return;
+    }
+
+    store.dispatch(fetchJournals({ token }));
+  }, [token]);
+
   return (
     <View style={styles.screen}>
       <View style={styles.input}>
@@ -30,8 +48,7 @@ export default function ListJournals({}: Props) {
         <CategoryFilter style={styles.badge}>Ideas</CategoryFilter>
       </View>
 
-      <JournalCard style={styles.journalCard} />
-      <JournalCard style={styles.journalCard} />
+      <JournalsFlatList journals={journals} />
     </View>
   );
 }
@@ -53,8 +70,5 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     borderRadius: 18,
-  },
-  journalCard: {
-    marginBottom: 8,
   },
 });

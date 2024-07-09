@@ -7,6 +7,7 @@ import InputText from "@/components/ui/InputText";
 import Button from "@/components/ui/Button";
 import { useLayoutEffect, useState } from "react";
 import {
+  fetchJournals,
   JournalEntryPayload,
   JournalEntryResponse,
   saveJournal,
@@ -27,7 +28,7 @@ export default function EditJournal({ navigation, journal }: PageProps) {
   }, [navigation, journal]);
   return (
     <View style={styles.screen}>
-      <FormView onSuccess={() => {}} journal={journal} />
+      <FormView onSuccess={() => navigation.goBack()} journal={journal} />
     </View>
   );
 }
@@ -67,6 +68,8 @@ function FormView({
           .dispatch(saveJournal({ ...values, token }))
           .unwrap()
           .then(() => {
+            store.dispatch(fetchJournals({ token }));
+
             Alert.alert(
               "Success",
               "The journal entry has been saved successfully.",
