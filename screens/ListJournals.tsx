@@ -1,21 +1,23 @@
-import InputText from "@/components/ui/InputText";
 import { CompositeScreenProps } from "@react-navigation/native";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { StyleSheet, View } from "react-native";
 import CategoryFilter from "@/components/screens/journals/CategoryFilter";
 import { DrawerScreenProps } from "@react-navigation/drawer";
 import { store, useAppSelector } from "@/store/store";
 import { useEffect, useMemo, useState } from "react";
-import { fetchJournals } from "@/store/journalSlice";
+import { Category, fetchCategories, fetchJournals } from "@/store/journalSlice";
 import JournalsFlatList from "@/components/screens/journals/JournalsFlatList";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
   DrawerNavigatorParamList,
   StackNavigatorParamList,
 } from "@/types/navigation";
-import ThemeColors from "@/constants/ThemeColors";
 import Loading from "@/components/ui/Loading";
 import SearchInput from "@/components/ui/SearchInput";
+
+interface CategorySelection {
+  category: Category;
+  checked: boolean;
+}
 
 type Props = CompositeScreenProps<
   DrawerScreenProps<DrawerNavigatorParamList, "ListJournals">,
@@ -30,6 +32,10 @@ export default function ListJournals({ navigation }: Props) {
   const journalsStatus = useAppSelector(
     (state) => state.journals.journalsStatus
   );
+  const categories = useAppSelector((state) => state.journals.categories);
+  const categoriesStatus = useAppSelector(
+    (state) => state.journals.categoriesStatus
+  );
 
   useEffect(() => {
     if (["loading", "fulfilled"].includes(journalsStatus)) {
@@ -37,16 +43,32 @@ export default function ListJournals({ navigation }: Props) {
     }
 
     store.dispatch(fetchJournals({ token }));
-  }, [token]);
+  }, [token, journalsStatus]);
+
+  useEffect(() => {
+    if (["loading", "fulfilled"].includes(categoriesStatus)) {
+      return;
+    }
+
+    store.dispatch(fetchCategories({ token }));
+  }, [token, categoriesStatus]);
 
   const [query, setQuery] = useState<string>("");
-  const journalsFiltered = useMemo(
-    () =>
-      journals.filter((journal) =>
+  const [categoryFilter, setCategoryFitler] = useState<Array<string>>([]);
+
+  const journalsFiltered = useMemo(() => {
+    return journals
+      .filter((journal) =>
         query ? journal.title.toLowerCase().includes(query.toLowerCase()) : true
-      ),
-    [query, journals]
-  );
+      )
+      .filter(
+        (journal) =>
+          categoryFilter.length === 0 ||
+          journal.categories?.some((category) =>
+            categoryFilter.includes(category)
+          )
+      );
+  }, [journals, query, categoryFilter]);
 
   return (
     <View>
@@ -54,13 +76,22 @@ export default function ListJournals({ navigation }: Props) {
         <SearchInput value={query} onChange={setQuery} />
       </View>
       <View style={styles.filterBadges}>
-        <CategoryFilter style={styles.badge} checked>
-          Reflections
-        </CategoryFilter>
-        <CategoryFilter style={styles.badge}>Introspections</CategoryFilter>
-        <CategoryFilter style={styles.badge}>Meditations</CategoryFilter>
-        <CategoryFilter style={styles.badge}>Mantras</CategoryFilter>
-        <CategoryFilter style={styles.badge}>Ideas</CategoryFilter>
+        {categories.map((category) => (
+          <CategoryFilter
+            key={category.id}
+            style={styles.badge}
+            checked={categoryFilter.includes(category.name)}
+            onPress={() => {
+              setCategoryFitler((current) =>
+                current.includes(category.name)
+                  ? current.filter((name) => name != category.name)
+                  : [...current, category.name]
+              );
+            }}
+          >
+            {category.name}
+          </CategoryFilter>
+        ))}
       </View>
 
       {journalsStatus === "pending" && <Loading size={"large"} />}

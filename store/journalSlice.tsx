@@ -74,10 +74,10 @@ export const fetchJournals = createAsyncThunk(
   }
 );
 
-interface Category {
+export type Category = {
   id: number;
   name: string;
-}
+};
 
 export const fetchCategories = createAsyncThunk(
   "journals/fetchCategories",
