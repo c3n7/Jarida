@@ -67,7 +67,6 @@ export const fetchJournals = createAsyncThunk(
       headers: {
         Authorization: `Token ${token}`,
         Accept: "application/json",
-        "Content-Type": "application/json",
       },
     }).then(async (response) => {
       return (await response.json()) as Array<JournalEntry>;
@@ -75,16 +74,43 @@ export const fetchJournals = createAsyncThunk(
   }
 );
 
+interface Category {
+  id: number;
+  name: string;
+}
+
+export const fetchCategories = createAsyncThunk(
+  "journals/fetchCategories",
+  async ({ token }: { token: string }) => {
+    return await fetch(`${Config.API_URL}/categories/`, {
+      headers: {
+        Authorization: `Token ${token}`,
+        Accept: "application/json",
+      },
+    }).then(async (response) => {
+      return (await response.json()) as Array<Category>;
+    });
+  }
+);
+
 interface JournalSliceState {
   journals: Array<JournalEntry>;
   journalsStatus: ThunkStatus;
+
   saveJournalStatus: ThunkStatus;
+
+  categories: Array<Category>;
+  categoriesStatus: ThunkStatus;
 }
 
 const initialState: JournalSliceState = {
   journals: [],
   journalsStatus: "idle",
+
   saveJournalStatus: "idle",
+
+  categories: [],
+  categoriesStatus: "idle",
 };
 
 export const journalSlice = createSlice({
@@ -103,14 +129,25 @@ export const journalSlice = createSlice({
     });
 
     builder.addCase(fetchJournals.pending, (state) => {
-      state.saveJournalStatus = "pending";
+      state.journalsStatus = "pending";
     });
     builder.addCase(fetchJournals.rejected, (state) => {
-      state.saveJournalStatus = "rejected";
+      state.journalsStatus = "rejected";
     });
     builder.addCase(fetchJournals.fulfilled, (state, { payload }) => {
-      state.saveJournalStatus = "fulfilled";
+      state.journalsStatus = "fulfilled";
       state.journals = payload;
+    });
+
+    builder.addCase(fetchCategories.pending, (state) => {
+      state.categoriesStatus = "pending";
+    });
+    builder.addCase(fetchCategories.rejected, (state) => {
+      state.categoriesStatus = "rejected";
+    });
+    builder.addCase(fetchCategories.fulfilled, (state, { payload }) => {
+      state.categoriesStatus = "fulfilled";
+      state.categories = payload;
     });
   },
 });

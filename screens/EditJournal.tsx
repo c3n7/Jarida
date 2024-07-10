@@ -1,10 +1,10 @@
-import { Alert, StyleSheet, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import InputText from "@/components/ui/InputText";
 import Button from "@/components/ui/Button";
-import { useLayoutEffect, useMemo } from "react";
+import { useEffect, useLayoutEffect, useMemo } from "react";
 import {
   fetchJournals,
   JournalEntryPayload,
@@ -19,11 +19,19 @@ import { Ionicons } from "@expo/vector-icons";
 type Props = NativeStackScreenProps<StackNavigatorParamList, "EditJournal">;
 
 export default function EditJournal({ navigation, route }: Props) {
-  const journalId = useMemo(() => route?.params?.journalId, [route]);
+  const token = useAppSelector((state) => state.auth.token!);
+
   const journal = useAppSelector((state) =>
     state.journals.journals.find((journal) => journal.id === journalId)
   );
-  const token = useAppSelector((state) => state.auth.token!);
+  const journalId = useMemo<number | undefined>(
+    () => route?.params?.journalId,
+    [route]
+  );
+  const categoryNames = useMemo<Array<string>>(
+    () => route?.params?.categoryNames ?? journal?.categories ?? [],
+    [route, journal]
+  );
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -31,19 +39,21 @@ export default function EditJournal({ navigation, route }: Props) {
     });
   }, [navigation, journal]);
   return (
-    <View style={styles.screen}>
-      <FormView
-        journal={{
-          id: journal?.id,
-          title: journal?.title ?? "",
-          content: journal?.content ?? "",
-          date: journal?.date ?? "",
-          category_names: journal?.categories ?? [],
-          token,
-        }}
-        navigation={navigation}
-      />
-    </View>
+    <ScrollView style={styles.screen}>
+      <View style={styles.container}>
+        <FormView
+          journal={{
+            id: journal?.id,
+            title: journal?.title ?? "",
+            content: journal?.content ?? "",
+            date: journal?.date ?? "",
+            category_names: categoryNames,
+            token,
+          }}
+          navigation={navigation}
+        />
+      </View>
+    </ScrollView>
   );
 }
 
@@ -99,16 +109,38 @@ function FormView({
           });
       }}
     >
-      {({ handleChange, handleSubmit, values, errors, touched }) => (
+      {({
+        handleChange,
+        setFieldValue,
+        handleSubmit,
+        values,
+        errors,
+        touched,
+      }) => (
         <>
-          <View style={styles.input}>
+          <View style={styles.categories}>
+            <CategoriesUpdatesChecker
+              categoryNames={journal?.category_names ?? []}
+              onUpdated={(v) => setFieldValue("category_names", v)}
+            />
+
+            {values.category_names.map((category, index) => (
+              <CategoryFilter
+                key={`${category}-${index}`}
+                style={styles.category}
+              >
+                {category}
+              </CategoryFilter>
+            ))}
             <CategoryFilter
               checked={true}
+              style={styles.category}
               leftSection={({ color }) => (
                 <Ionicons name="add" size={16} color={color} />
               )}
               onPress={() =>
                 navigation.navigate("SelectCategories", {
+                  journalId: journal?.id,
                   currentCategories: values.category_names,
                 })
               }
@@ -154,12 +186,37 @@ function FormView({
   );
 }
 
+function CategoriesUpdatesChecker({
+  categoryNames,
+  onUpdated,
+}: {
+  categoryNames: Array<string>;
+  onUpdated: (values: Array<string>) => void;
+}) {
+  useEffect(() => {
+    onUpdated(categoryNames);
+  }, [categoryNames]);
+
+  return <></>;
+}
+
 const styles = StyleSheet.create({
   screen: {
     padding: 8,
   },
+  container: {
+    paddingBottom: 16,
+  },
   input: {
     marginBottom: 8,
     width: "100%",
+  },
+  categories: {
+    flexDirection: "row",
+    flexWrap: "nowrap",
+    marginBottom: 8,
+  },
+  category: {
+    marginRight: 8,
   },
 });

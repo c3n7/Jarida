@@ -64,7 +64,11 @@ export default function AuthenticatedStack() {
       />
       <Stack.Screen name="EditJournal" component={EditJournal} />
       <Stack.Screen name="ShowJournal" component={ShowJournal} />
-      <Stack.Screen name="SelectCategories" component={SelectCategories} />
+      <Stack.Screen
+        name="SelectCategories"
+        component={SelectCategories}
+        options={{ title: "Select Categories" }}
+      />
     </Stack.Navigator>
   );
 }

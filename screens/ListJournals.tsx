@@ -1,6 +1,6 @@
 import InputText from "@/components/ui/InputText";
 import { CompositeScreenProps } from "@react-navigation/native";
-import { StyleSheet, View } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import CategoryFilter from "@/components/screens/journals/CategoryFilter";
 import { DrawerScreenProps } from "@react-navigation/drawer";
@@ -13,6 +13,9 @@ import {
   DrawerNavigatorParamList,
   StackNavigatorParamList,
 } from "@/types/navigation";
+import ThemeColors from "@/constants/ThemeColors";
+import Loading from "@/components/ui/Loading";
+import SearchInput from "@/components/ui/SearchInput";
 
 type Props = CompositeScreenProps<
   DrawerScreenProps<DrawerNavigatorParamList, "ListJournals">,
@@ -48,15 +51,7 @@ export default function ListJournals({ navigation }: Props) {
   return (
     <View>
       <View style={styles.input}>
-        <InputText
-          placeholder="Type to search..."
-          leftSection={({ color }) => (
-            <Ionicons name="search" size={19} color={color} />
-          )}
-          containerStyle={styles.searchInput}
-          value={query}
-          onChange={setQuery}
-        />
+        <SearchInput value={query} onChange={setQuery} />
       </View>
       <View style={styles.filterBadges}>
         <CategoryFilter style={styles.badge} checked>
@@ -68,6 +63,7 @@ export default function ListJournals({ navigation }: Props) {
         <CategoryFilter style={styles.badge}>Ideas</CategoryFilter>
       </View>
 
+      {journalsStatus === "pending" && <Loading size={"large"} />}
       <JournalsFlatList journals={journalsFiltered} navigation={navigation} />
     </View>
   );
@@ -87,8 +83,5 @@ const styles = StyleSheet.create({
   badge: {
     marginRight: 8,
     marginBottom: 8,
-  },
-  searchInput: {
-    borderRadius: 18,
   },
 });

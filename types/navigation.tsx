@@ -6,7 +6,7 @@ export type DrawerNavigatorParamList = {
 
 export type StackNavigatorParamList = {
   DrawerScreens: NavigatorScreenParams<DrawerNavigatorParamList>;
-  EditJournal: { journalId?: number };
+  EditJournal: { journalId?: number; categoryNames?: Array<string> };
   ShowJournal: { journalId: number };
-  SelectCategories: { currentCategories?: Array<string> };
+  SelectCategories: { journalId?: number; currentCategories?: Array<string> };
 };
