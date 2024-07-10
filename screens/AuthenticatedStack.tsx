@@ -14,6 +14,7 @@ import {
   StackNavigatorParamList,
 } from "@/types/navigation";
 import HeaderIcon from "@/components/ui/HeaderIcon";
+import SelectCategories from "./SelectCategories";
 
 const Stack = createNativeStackNavigator<StackNavigatorParamList>();
 const Drawer = createDrawerNavigator<DrawerNavigatorParamList>();
@@ -63,6 +64,7 @@ export default function AuthenticatedStack() {
       />
       <Stack.Screen name="EditJournal" component={EditJournal} />
       <Stack.Screen name="ShowJournal" component={ShowJournal} />
+      <Stack.Screen name="SelectCategories" component={SelectCategories} />
     </Stack.Navigator>
   );
 }

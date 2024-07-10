@@ -8,4 +8,5 @@ export type StackNavigatorParamList = {
   DrawerScreens: NavigatorScreenParams<DrawerNavigatorParamList>;
   EditJournal: { journalId?: number };
   ShowJournal: { journalId: number };
+  SelectCategories: { currentCategories?: Array<string> };
 };

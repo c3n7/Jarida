@@ -13,6 +13,8 @@ import {
 } from "@/store/journalSlice";
 import { store, useAppSelector } from "@/store/store";
 import { StackNavigatorParamList } from "@/types/navigation";
+import CategoryFilter from "@/components/screens/journals/CategoryFilter";
+import { Ionicons } from "@expo/vector-icons";
 
 type Props = NativeStackScreenProps<StackNavigatorParamList, "EditJournal">;
 
@@ -39,18 +41,18 @@ export default function EditJournal({ navigation, route }: Props) {
           category_names: journal?.categories ?? [],
           token,
         }}
-        onSuccess={() => navigation.goBack()}
+        navigation={navigation}
       />
     </View>
   );
 }
 
 function FormView({
-  onSuccess,
   journal,
+  navigation,
 }: {
-  onSuccess: Function;
   journal?: JournalEntryPayload;
+  navigation: Props["navigation"];
 }) {
   const isSubmitting = useAppSelector(
     (state) => state.journals.journalsStatus === "pending"
@@ -86,7 +88,7 @@ function FormView({
             Alert.alert(
               "Success",
               "The journal entry has been saved successfully.",
-              [{ text: "Okay", onPress: () => onSuccess() }]
+              [{ text: "Okay", onPress: () => navigation.goBack() }]
             );
           })
           .catch((e: JournalEntryResponse) => {
@@ -99,6 +101,21 @@ function FormView({
     >
       {({ handleChange, handleSubmit, values, errors, touched }) => (
         <>
+          <View style={styles.input}>
+            <CategoryFilter
+              checked={true}
+              leftSection={({ color }) => (
+                <Ionicons name="add" size={16} color={color} />
+              )}
+              onPress={() =>
+                navigation.navigate("SelectCategories", {
+                  currentCategories: values.category_names,
+                })
+              }
+            >
+              Category
+            </CategoryFilter>
+          </View>
           <View style={styles.input}>
             <InputText
               label="Title"
