@@ -6,6 +6,7 @@ import InputText from "@/components/ui/InputText";
 import Button from "@/components/ui/Button";
 import { useEffect, useLayoutEffect, useMemo } from "react";
 import {
+  fetchCategories,
   fetchJournals,
   JournalEntryPayload,
   JournalEntryResponse,
@@ -21,13 +22,14 @@ type Props = NativeStackScreenProps<StackNavigatorParamList, "EditJournal">;
 export default function EditJournal({ navigation, route }: Props) {
   const token = useAppSelector((state) => state.auth.token!);
 
-  const journal = useAppSelector((state) =>
-    state.journals.journals.find((journal) => journal.id === journalId)
-  );
   const journalId = useMemo<number | undefined>(
     () => route?.params?.journalId,
     [route]
   );
+  const journal = useAppSelector((state) =>
+    state.journals.journals.find((journal) => journal.id === journalId)
+  );
+
   const categoryNames = useMemo<Array<string>>(
     () => route?.params?.categoryNames ?? journal?.categories ?? [],
     [route, journal]
@@ -94,6 +96,7 @@ function FormView({
           .unwrap()
           .then(() => {
             store.dispatch(fetchJournals({ token }));
+            store.dispatch(fetchCategories({ token }));
 
             Alert.alert(
               "Success",
