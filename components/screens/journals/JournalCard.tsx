@@ -9,6 +9,7 @@ import {
   ViewStyle,
 } from "react-native";
 import { ListJournalsNavigationProp } from "@/screens/ListJournals";
+import CategoryFilter from "./CategoryFilter";
 
 export default function JournalCard({
   journal,
@@ -27,6 +28,7 @@ export default function JournalCard({
       }
     >
       <Text style={styles.title}>{journal.title}</Text>
+
       <Text style={styles.date}>
         {new Date(journal.date).toLocaleDateString("en-GB", {
           day: "numeric",
@@ -34,14 +36,18 @@ export default function JournalCard({
           year: "numeric",
         })}
       </Text>
-      <View>
-        <Text style={styles.content}>
-          {journal.content.substring(0, 300)}
-          {journal.content.length > 300 && "..."}
-        </Text>
-      </View>
+
+      <Text style={styles.content}>
+        {journal.content.substring(0, 300)}
+        {journal.content.length > 300 && "..."}
+      </Text>
+
       <View style={styles.categoryContainer}>
-        <Text style={styles.categoryBadge}>Reflections</Text>
+        {journal.categories?.map((category) => (
+          <CategoryFilter key={category} style={styles.categoryBadge}>
+            {category}
+          </CategoryFilter>
+        ))}
       </View>
     </Pressable>
   );
@@ -71,10 +77,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
   categoryBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    backgroundColor: ThemeColors.primary200,
-    color: ThemeColors.baseContent,
-    borderRadius: 120,
+    marginRight: 8,
   },
 });
