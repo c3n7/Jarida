@@ -16,6 +16,11 @@ type Props = NativeStackScreenProps<
   "SelectCategories"
 >;
 
+interface CategoryOption {
+  name: string;
+  uid: string;
+}
+
 export default function SelectCategories({ navigation, route }: Props) {
   const journalId = useMemo(() => route.params.journalId, [route]);
   const currentCategories = useMemo(
@@ -28,6 +33,20 @@ export default function SelectCategories({ navigation, route }: Props) {
   const categoriesStatus = useAppSelector(
     (state) => state.journals.categoriesStatus
   );
+
+  const categoryOptions = useMemo<Array<CategoryOption>>(() => {
+    const allCategories: Array<string> = categories.map((item) => item.name);
+    const unique: Array<string> = [
+      ...new Set([...allCategories, ...currentCategories]),
+    ];
+
+    const options: Array<CategoryOption> = unique.map((item) => ({
+      uid: `${Math.random()}`,
+      name: item,
+    }));
+
+    return options;
+  }, [categories]);
 
   useEffect(() => {
     if (["loading", "fulfilled"].includes(categoriesStatus)) {
@@ -83,9 +102,9 @@ export default function SelectCategories({ navigation, route }: Props) {
                 onChange={(v) => setFieldValue("newCategory", v)}
               />
             </View>
-            {categories.map((category) => (
+            {categoryOptions.map((category) => (
               <Pressable
-                key={category.id}
+                key={category.uid}
                 style={[
                   styles.categoryContainer,
                   values.category_names.includes(category.name) &&

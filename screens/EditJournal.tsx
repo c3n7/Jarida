@@ -216,10 +216,10 @@ const styles = StyleSheet.create({
   },
   categories: {
     flexDirection: "row",
-    flexWrap: "nowrap",
-    marginBottom: 8,
+    flexWrap: "wrap",
   },
   category: {
     marginRight: 8,
+    marginBottom: 8,
   },
 });
