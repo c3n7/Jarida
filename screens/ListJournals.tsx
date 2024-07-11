@@ -1,5 +1,5 @@
 import { CompositeScreenProps } from "@react-navigation/native";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import CategoryFilter from "@/components/screens/journals/CategoryFilter";
 import { DrawerScreenProps } from "@react-navigation/drawer";
 import { store, useAppSelector } from "@/store/store";
@@ -100,12 +100,29 @@ export default function ListJournals({ navigation }: Props) {
       </View>
 
       {isLoading && <Loading size={"large"} />}
+
+      {journalsStatus === "fulfilled" && journals.length === 0 && (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>
+            Oh no 😔, there's nothing to show, add 📝 a new journal by tapping
+            on the plus ➕ icon above ☝️!
+          </Text>
+        </View>
+      )}
+
       <JournalsFlatList journals={journalsFiltered} navigation={navigation} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  emptyContainer: {
+    padding: 8,
+  },
+  emptyText: {
+    fontSize: 16,
+    textAlign: "center",
+  },
   input: {
     marginBottom: 8,
     paddingTop: 8,
