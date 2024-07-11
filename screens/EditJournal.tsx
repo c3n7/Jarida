@@ -67,7 +67,7 @@ function FormView({
   navigation: Props["navigation"];
 }) {
   const isSubmitting = useAppSelector(
-    (state) => state.journals.journalsStatus === "pending"
+    (state) => state.journals.saveJournalStatus === "pending"
   );
   const token = useAppSelector((state) => state.auth.token!);
 

@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: ThemeColors.primary500,
     width: "100%",
+    flex: 1,
     flexDirection: "row",
     justifyContent: "center",
     borderRadius: 4,

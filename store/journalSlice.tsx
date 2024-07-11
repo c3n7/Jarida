@@ -60,6 +60,32 @@ export const saveJournal = createAsyncThunk(
   }
 );
 
+interface DeleteJournalResponse {
+  message: string;
+}
+
+export const deleteJournal = createAsyncThunk(
+  "journals/deleteJournal",
+  async ({ id, token }: { id: number; token: string }, thunkApi) => {
+    return await fetch(`${Config.API_URL}/journal-entries/${id}/`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Token ${token}`,
+        Accept: "application/json",
+      },
+    }).then((response) => {
+      let result: DeleteJournalResponse | undefined;
+      if (response.ok) {
+        result = { message: "Operation Successful" };
+        return result;
+      }
+
+      result = { message: "Operation Failed" };
+      return thunkApi.rejectWithValue(result);
+    });
+  }
+);
+
 export const fetchJournals = createAsyncThunk(
   "journals/fetchJournals",
   async ({ token }: { token: string }) => {
@@ -98,6 +124,7 @@ interface JournalSliceState {
   journalsStatus: ThunkStatus;
 
   saveJournalStatus: ThunkStatus;
+  deleteJournalStatus: ThunkStatus;
 
   categories: Array<Category>;
   categoriesStatus: ThunkStatus;
@@ -108,6 +135,7 @@ const initialState: JournalSliceState = {
   journalsStatus: "idle",
 
   saveJournalStatus: "idle",
+  deleteJournalStatus: "idle",
 
   categories: [],
   categoriesStatus: "idle",
@@ -126,6 +154,16 @@ export const journalSlice = createSlice({
     });
     builder.addCase(saveJournal.fulfilled, (state) => {
       state.saveJournalStatus = "fulfilled";
+    });
+
+    builder.addCase(deleteJournal.pending, (state) => {
+      state.deleteJournalStatus = "pending";
+    });
+    builder.addCase(deleteJournal.rejected, (state) => {
+      state.deleteJournalStatus = "rejected";
+    });
+    builder.addCase(deleteJournal.fulfilled, (state) => {
+      state.deleteJournalStatus = "fulfilled";
     });
 
     builder.addCase(fetchJournals.pending, (state) => {
