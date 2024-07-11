@@ -42,7 +42,7 @@ export default function JournalCard({
         {journal.content.length > 300 && "..."}
       </Text>
 
-      <View style={styles.categoryContainer}>
+      <View style={styles.categories}>
         {journal.categories?.map((category) => (
           <CategoryFilter key={category} style={styles.categoryBadge}>
             {category}
@@ -71,12 +71,13 @@ const styles = StyleSheet.create({
   content: {
     textAlign: "justify",
   },
-  categoryContainer: {
-    marginTop: 4,
+  categories: {
     flexDirection: "row",
     justifyContent: "flex-start",
+    flexWrap: "wrap",
   },
   categoryBadge: {
-    marginRight: 8,
+    marginRight: 4,
+    marginTop: 4,
   },
 });

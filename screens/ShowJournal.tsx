@@ -6,6 +6,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useLayoutEffect, useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import CategoryFilter from "@/components/screens/journals/CategoryFilter";
 
 type Props = NativeStackScreenProps<StackNavigatorParamList, "ShowJournal">;
 
@@ -43,6 +44,15 @@ export default function ShowJournal({ route, navigation }: Props) {
           year: "numeric",
         })}
       </Text>
+
+      <View style={styles.categories}>
+        {journal.categories?.map((category, index) => (
+          <CategoryFilter key={`${category}-${index}`} style={styles.category}>
+            {category}
+          </CategoryFilter>
+        ))}
+      </View>
+
       <Text style={styles.content}>{journal.content}</Text>
     </View>
   );
@@ -58,9 +68,17 @@ const styles = StyleSheet.create({
   },
   date: {
     color: ThemeColors.gray600,
-    marginBottom: 6,
+    marginBottom: 2,
   },
   content: {
     textAlign: "justify",
+  },
+  categories: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  category: {
+    marginRight: 8,
+    marginBottom: 8,
   },
 });
