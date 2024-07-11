@@ -2,6 +2,7 @@ import { NavigatorScreenParams } from "@react-navigation/native";
 
 export type DrawerNavigatorParamList = {
   ListJournals: undefined;
+  Settings: undefined;
 };
 
 export type StackNavigatorParamList = {

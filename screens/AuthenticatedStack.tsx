@@ -22,6 +22,7 @@ import HeaderIcon from "@/components/ui/HeaderIcon";
 import SelectCategories from "./SelectCategories";
 import { store } from "@/store/store";
 import { clearToken } from "@/store/authSlice";
+import Settings from "./Settings";
 
 const Stack = createNativeStackNavigator<StackNavigatorParamList>();
 const Drawer = createDrawerNavigator<DrawerNavigatorParamList>();
@@ -69,6 +70,18 @@ function DrawerNavigator({ navigation }: DrawerNavigatorProps) {
           ),
           drawerIcon: ({ color, size }) => (
             <Ionicons name="home-outline" color={color} size={size} />
+          ),
+        }}
+      />
+
+      <Drawer.Screen
+        name="Settings"
+        component={Settings}
+        options={{
+          title: "Settings",
+
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name="settings-outline" color={color} size={size} />
           ),
         }}
       />

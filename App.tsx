@@ -5,7 +5,7 @@ import { store, useAppSelector } from "./store/store";
 import * as SplashScreen from "expo-splash-screen";
 import { useLayoutEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { setToken } from "./store/authSlice";
+import { setToken, setUsername } from "./store/authSlice";
 import AuthenticationStack from "./screens/AuthenticationStack";
 import AuthenticatedStack from "./screens/AuthenticatedStack";
 
@@ -16,8 +16,12 @@ function Navigation() {
   useLayoutEffect(() => {
     async function loadToken() {
       const token = await AsyncStorage.getItem("token");
+      const username = await AsyncStorage.getItem("username");
       if (token) {
         store.dispatch(setToken(token));
+      }
+      if (username) {
+        store.dispatch(setUsername(username));
       }
 
       await SplashScreen.hideAsync();

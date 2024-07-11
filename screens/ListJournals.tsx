@@ -37,6 +37,11 @@ export default function ListJournals({ navigation }: Props) {
     (state) => state.journals.categoriesStatus
   );
 
+  const isLoading = useMemo<boolean>(
+    () => journalsStatus === "pending" || categoriesStatus === "pending",
+    [journalsStatus, categoriesStatus]
+  );
+
   useEffect(() => {
     if (["loading", "fulfilled"].includes(journalsStatus)) {
       return;
@@ -94,7 +99,7 @@ export default function ListJournals({ navigation }: Props) {
         ))}
       </View>
 
-      {journalsStatus === "pending" && <Loading size={"large"} />}
+      {isLoading && <Loading size={"large"} />}
       <JournalsFlatList journals={journalsFiltered} navigation={navigation} />
     </View>
   );
