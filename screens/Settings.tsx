@@ -20,6 +20,7 @@ import {
 import Button from "@/components/ui/Button";
 import ThemeColors from "@/constants/ThemeColors";
 import { useEffect, useMemo } from "react";
+import Loading from "@/components/ui/Loading";
 
 export default function Settings() {
   return (
@@ -55,7 +56,7 @@ function UpdateProfile() {
   }, [token, profileStatus]);
 
   if (profileStatus === "pending") {
-    return <ActivityIndicator size="large" color={ThemeColors.primary500} />;
+    return <Loading size={"large"} />;
   }
 
   return (
