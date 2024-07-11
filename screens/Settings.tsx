@@ -1,10 +1,11 @@
 import InputText from "@/components/ui/InputText";
 import { store, useAppSelector } from "@/store/store";
 import { Formik } from "formik";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, StyleSheet, Text, View } from "react-native";
 import * as Yup from "yup";
 import { Ionicons } from "@expo/vector-icons";
 import {
+  fetchProfile,
   setUsername,
   signUp,
   SignUpPayload,
@@ -12,9 +13,13 @@ import {
   updatePassword,
   UpdatePasswordPayload,
   UpdatePasswordResponse,
+  updateProfile,
+  UpdateProfilePayload,
+  UpdateProfileResponse,
 } from "@/store/authSlice";
 import Button from "@/components/ui/Button";
 import ThemeColors from "@/constants/ThemeColors";
+import { useEffect, useMemo } from "react";
 
 export default function Settings() {
   return (
@@ -33,36 +38,59 @@ export default function Settings() {
 }
 
 function UpdateProfile() {
-  const username = useAppSelector((state) => state.auth.username);
   const isSubmitting = useAppSelector(
-    (state) => state.auth.signUpStatus === "pending"
+    (state) => state.auth.updateProfileStatus === "pending"
   );
+
+  const token = useAppSelector((state) => state.auth.token)!;
+  const profile = useAppSelector((state) => state.auth.profile);
+  const profileStatus = useAppSelector((state) => state.auth.profileStatus);
+
+  useEffect(() => {
+    if (["loading", "fulfilled"].includes(profileStatus)) {
+      return;
+    }
+
+    store.dispatch(fetchProfile({ token }));
+  }, [token, profileStatus]);
+
+  if (profileStatus === "pending") {
+    return <ActivityIndicator size="large" color={ThemeColors.primary500} />;
+  }
 
   return (
     <Formik
       initialValues={
         {
-          username: username ?? "",
-          password1: "",
-          password2: "",
-        } satisfies SignUpPayload
+          token,
+          username: profile?.username ?? "",
+          first_name: profile?.first_name ?? "",
+          last_name: profile?.last_name ?? "",
+        } satisfies UpdateProfilePayload
       }
       validationSchema={Yup.object({
-        username: Yup.string().required("This field is required."),
-        password1: Yup.string().required("This field is required."),
-        password2: Yup.string().oneOf(
-          [Yup.ref("password1"), ""],
-          "Passwords must match."
-        ),
+        username: Yup.string().notRequired(),
+        first_name: Yup.string().notRequired(),
+        last_name: Yup.string().notRequired(),
       })}
       onSubmit={async (values, { setFieldError }) => {
+        const payload: UpdateProfilePayload = {
+          token,
+          first_name: values.first_name,
+          last_name: values.last_name,
+        };
+
+        if (profile?.username !== values.username) {
+          payload.username = values.username;
+        }
+
         await store
-          .dispatch(signUp(values))
+          .dispatch(updateProfile(payload))
           .unwrap()
           .then(() => {
             Alert.alert(
-              "Welcome",
-              "Your account has been created successfully. You should now be able to sign in.",
+              "Success",
+              "Your profile has been updated successfully.",
               [
                 {
                   text: "OK",
@@ -70,10 +98,10 @@ function UpdateProfile() {
               ]
             );
           })
-          .catch((e: SignUpResponse) => {
+          .catch((e: UpdateProfileResponse) => {
             if (e.username) setFieldError("username", e.username);
-            if (e.password1) setFieldError("password1", e.password1);
-            if (e.password2) setFieldError("password2", e.password2);
+            if (e.first_name) setFieldError("first_name", e.first_name);
+            if (e.last_name) setFieldError("last_name", e.last_name);
           });
       }}
     >
@@ -88,6 +116,7 @@ function UpdateProfile() {
         <>
           <View style={styles.input}>
             <InputText
+              label="Username"
               placeholder="Username"
               leftSection={({ color }) => (
                 <Ionicons name="person" size={15} color={color} />
@@ -102,20 +131,20 @@ function UpdateProfile() {
           </View>
           <View style={styles.input}>
             <InputText
+              label="First Name"
               placeholder="First Name"
-              value={values.password1}
-              onChange={handleChange("password1")}
-              error={touched.password1 && errors.password1}
-              secureTextEntry
+              value={values.first_name}
+              onChange={handleChange("first_name")}
+              error={touched.first_name && errors.first_name}
             />
           </View>
           <View style={styles.input}>
             <InputText
+              label="Last Name"
               placeholder="Last Name"
-              value={values.password2}
-              onChange={handleChange("password2")}
-              error={touched.password2 && errors.password2}
-              secureTextEntry
+              value={values.last_name}
+              onChange={handleChange("last_name")}
+              error={touched.last_name && errors.last_name}
             />
           </View>
 

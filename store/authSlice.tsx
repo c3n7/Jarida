@@ -121,20 +121,91 @@ export const updatePassword = createAsyncThunk(
   }
 );
 
+export type UserProfile = {
+  username: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+};
+
+export const fetchProfile = createAsyncThunk(
+  "auth/fetchProfile",
+  async ({ token }: { token: string }, thunkApi) => {
+    return await fetch(`${Config.API_URL}/dj-rest-auth/user/`, {
+      headers: {
+        Authorization: `Token ${token}`,
+        Accept: "application/json",
+      },
+    }).then(async (response) => (await response.json()) as UserProfile);
+  }
+);
+
+export type UpdateProfilePayload = {
+  token: string;
+  username?: string;
+  first_name: string;
+  last_name: string;
+};
+
+export type UpdateProfileResponse = {
+  username?: string;
+  first_name?: string;
+  last_name?: string;
+  message?: string;
+};
+
+export const updateProfile = createAsyncThunk(
+  "auth/updateProfile",
+  async (
+    { token, username, first_name, last_name }: UpdateProfilePayload,
+    thunkApi
+  ) => {
+    return await fetch(`${Config.API_URL}/dj-rest-auth/user/`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Token ${token}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, first_name, last_name }),
+    }).then(async (response) => {
+      let result: UpdateProfileResponse | null = null;
+      if (response.headers.get("content-type") === "application/json") {
+        result = (await response.json()) as UpdateProfileResponse;
+      }
+
+      if (!response.ok) {
+        result ??= { message: "Operation Failed." };
+        return thunkApi.rejectWithValue(result);
+      }
+
+      return result;
+    });
+  }
+);
+
 interface AuthState {
   token?: string;
   username?: string;
+  profile?: UserProfile;
+
   signUpStatus: ThunkStatus;
   signInStatus: ThunkStatus;
+  profileStatus: ThunkStatus;
   updatePasswordStatus: ThunkStatus;
+  updateProfileStatus: ThunkStatus;
 }
 
 const initialState: AuthState = {
   token: undefined,
   username: undefined,
+  profile: undefined,
+
   signUpStatus: "idle",
   signInStatus: "idle",
+  profileStatus: "idle",
   updatePasswordStatus: "idle",
+  updateProfileStatus: "idle",
 };
 
 export const authSlice = createSlice({
@@ -142,7 +213,6 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     setUsername: (state, action: PayloadAction<string>) => {
-      AsyncStorage.setItem("username", action.payload);
       state.username = action.payload;
     },
     setToken: (state, action: PayloadAction<string>) => {
@@ -151,7 +221,6 @@ export const authSlice = createSlice({
     clearToken: (state) => {
       state.token = undefined;
       AsyncStorage.removeItem("token");
-      AsyncStorage.removeItem("username");
     },
   },
   extraReducers(builder) {
@@ -187,6 +256,27 @@ export const authSlice = createSlice({
     });
     builder.addCase(updatePassword.fulfilled, (state) => {
       state.updatePasswordStatus = "fulfilled";
+    });
+
+    builder.addCase(fetchProfile.pending, (state) => {
+      state.profileStatus = "pending";
+    });
+    builder.addCase(fetchProfile.rejected, (state) => {
+      state.profileStatus = "rejected";
+    });
+    builder.addCase(fetchProfile.fulfilled, (state, { payload }) => {
+      state.profile = payload;
+      state.profileStatus = "fulfilled";
+    });
+
+    builder.addCase(updateProfile.pending, (state) => {
+      state.updateProfileStatus = "pending";
+    });
+    builder.addCase(updateProfile.rejected, (state) => {
+      state.updateProfileStatus = "rejected";
+    });
+    builder.addCase(updateProfile.fulfilled, (state, { payload }) => {
+      state.updateProfileStatus = "fulfilled";
     });
   },
 });
