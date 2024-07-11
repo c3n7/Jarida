@@ -124,9 +124,6 @@ export default function SelectCategories({ navigation, route }: Props) {
           </>
         )}
       </Formik>
-
-      <Text>{JSON.stringify(currentCategories)}</Text>
-      <Text>{JSON.stringify(categories)}</Text>
     </View>
   );
 }
