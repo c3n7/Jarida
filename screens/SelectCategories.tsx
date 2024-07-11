@@ -118,7 +118,7 @@ export default function SelectCategories({ navigation, route }: Props) {
                       : [...values.category_names, category.name]
                   )
                 }
-                android_ripple={{ color: ThemeColors.gray400 }}
+                android_ripple={{ color: ThemeColors.primary200 }}
               >
                 <Text
                   style={[
