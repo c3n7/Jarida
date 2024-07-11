@@ -8,6 +8,7 @@ import {
   Text,
   TextStyle,
   View,
+  ViewStyle,
 } from "react-native";
 
 export default function FlatButton({
@@ -16,15 +17,17 @@ export default function FlatButton({
   style,
   loading,
   loadingColor = ThemeColors.baseContent,
+  containerStyle,
 }: {
   children: React.ReactNode;
   onPress?: PressableProps["onPress"];
   style?: StyleProp<TextStyle>;
   loading?: boolean;
   loadingColor?: string;
+  containerStyle?: StyleProp<ViewStyle>;
 }) {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, containerStyle]}>
       <Pressable
         style={styles.pressable}
         android_ripple={{ color: ThemeColors.base200 }}
@@ -44,7 +47,6 @@ const styles = StyleSheet.create({
   container: {
     paddingVertical: 8,
     width: "100%",
-    flex: 1,
     flexDirection: "row",
     borderRadius: 4,
   },

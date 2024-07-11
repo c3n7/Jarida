@@ -3,22 +3,26 @@ import {
   ActivityIndicator,
   Pressable,
   PressableProps,
+  StyleProp,
   StyleSheet,
   Text,
   View,
+  ViewStyle,
 } from "react-native";
 
 export default function Button({
   children,
   onPress,
   loading,
+  containerStyle,
 }: {
   children: React.ReactNode;
   onPress?: PressableProps["onPress"];
   loading?: boolean;
+  containerStyle?: StyleProp<ViewStyle>;
 }) {
   return (
-    <View style={[styles.container, loading && styles.loading]}>
+    <View style={[styles.container, containerStyle, loading && styles.loading]}>
       <Pressable
         style={styles.pressable}
         android_ripple={{ color: ThemeColors.primary300 }}
@@ -43,7 +47,6 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: ThemeColors.primary500,
     width: "100%",
-    flex: 1,
     flexDirection: "row",
     justifyContent: "center",
     borderRadius: 4,

@@ -94,12 +94,14 @@ export default function ShowJournal({ route, navigation }: Props) {
           }}
           loadingColor={ThemeColors.error}
           loading={isDeleting}
+          containerStyle={styles.action}
         >
           Delete
         </FlatButton>
 
         <Button
           onPress={() => navigation.navigate("EditJournal", { journalId })}
+          containerStyle={styles.action}
         >
           Edit
         </Button>
@@ -134,6 +136,9 @@ const styles = StyleSheet.create({
   actions: {
     marginTop: 8,
     flexDirection: "row",
+  },
+  action: {
+    flex: 1,
   },
   deleteAction: {
     color: ThemeColors.error,

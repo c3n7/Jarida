@@ -104,6 +104,10 @@ export const authSlice = createSlice({
     setToken: (state, action: PayloadAction<string>) => {
       state.token = action.payload;
     },
+    clearToken: (state) => {
+      state.token = undefined;
+      AsyncStorage.removeItem("token");
+    },
   },
   extraReducers(builder) {
     builder.addCase(signUp.pending, (state) => {
@@ -132,6 +136,6 @@ export const authSlice = createSlice({
   },
 });
 
-export const { setUsername, setToken } = authSlice.actions;
+export const { setUsername, setToken, clearToken } = authSlice.actions;
 
 export default authSlice.reducer;
