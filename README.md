@@ -1,5 +1,7 @@
 # Jarida
 
+[![APK Download](https://img.shields.io/badge/APK-v1.0.0_preview-blue)](https://github.com/c3n7/Jarida/releases/download/v1.0.0/jarida-development-preview-v1.0.0.apk)
+
 Part of the Jarida Project. Built with React Native.
 
 ## Installation
